@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "games": [
+    {
+      "id": "glass-ridge",
+      "title": "Glass Ridge",
+      "platform": "PC",
+      "abandoned_on": "2026-07-01",
+      "reason_category": "technical",
+      "reason": "Frequent crashes interrupted every session.",
+      "attempts": 3,
+      "playtime_hours": 4.5,
+      "reconsider_on": "2027-01-01"
+    }
+  ]
+}

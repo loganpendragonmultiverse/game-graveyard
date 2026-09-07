@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import json
+import math
 from collections import Counter
 from datetime import date
 from pathlib import Path
 from typing import Any
+
+from .history import load_csv, state_as_of, validate_history
 
 REASONS = {"technical", "difficulty", "time", "design", "accessibility", "story", "other"}
 
@@ -20,7 +23,17 @@ def _date(value: Any, field: str) -> str:
 
 
 def load_graveyard(path: Path) -> dict[str, Any]:
-    data = json.loads(path.read_text(encoding="utf-8"))
+    text = path.read_text(encoding="utf-8")
+    data = load_csv(text) if path.suffix.lower() == ".csv" else json.loads(text)
+    if isinstance(data, dict) and "version" not in data and isinstance(data.get("games"), list):
+        if not all(
+            isinstance(g, dict) and isinstance(g.get("graveyard_record"), dict)
+            for g in data["games"]
+        ):
+            raise ValueError(
+                "Backlog import requires authored graveyard_record metadata; reasons are never inferred"
+            )
+        data = {"version": 1, "games": [g["graveyard_record"] for g in data["games"]]}
     if not isinstance(data, dict) or data.get("version") != 1:
         raise ValueError("graveyard must be a version 1 object")
     games = data.get("games")
@@ -45,12 +58,22 @@ def load_graveyard(path: Path) -> dict[str, Any]:
         hours = game.get("playtime_hours", 0)
         if not isinstance(attempts, int) or isinstance(attempts, bool) or attempts < 1:
             raise ValueError(f"game {game['id']} attempts must be a positive integer")
-        if not isinstance(hours, (int, float)) or isinstance(hours, bool) or hours < 0:
+        if (
+            not isinstance(hours, (int, float))
+            or isinstance(hours, bool)
+            or hours < 0
+            or not math.isfinite(hours)
+        ):
             raise ValueError(f"game {game['id']} playtime_hours must be non-negative")
+        validate_history(game)
     return data
 
 
-def build_report(data: dict[str, Any], reason: str | None = None) -> dict[str, Any]:
+def build_report(
+    data: dict[str, Any], reason: str | None = None, as_of: str | None = None
+) -> dict[str, Any]:
+    if as_of is not None:
+        _date(as_of, "as_of")
     if reason is not None and reason not in REASONS:
         raise ValueError(f"unknown reason category: {reason}")
     games = [game for game in data["games"] if reason is None or game["reason_category"] == reason]
@@ -67,6 +90,15 @@ def build_report(data: dict[str, Any], reason: str | None = None) -> dict[str, A
         "platform_counts": dict(sorted(platform_counts.items())),
         "reconsideration_count": len(reconsiderations),
         "games": games,
+        "as_of": as_of,
+        "current_states": {g["id"]: state_as_of(g, as_of) for g in games},
+        "due_for_reconsideration": [
+            g["id"]
+            for g in games
+            if as_of
+            and g.get("reconsider_on", "9999-12-31") <= as_of
+            and state_as_of(g, as_of) != "returned"
+        ],
     }
 
 
@@ -77,12 +109,21 @@ def render_markdown(report: dict[str, Any]) -> str:
         f"Games: **{report['game_count']}** · Recorded playtime: **{report['total_playtime_hours']} hours** · Reconsiderations: **{report['reconsideration_count']}**",
         "",
     ]
+    if report.get("as_of"):
+        lines.extend(
+            [
+                f"As of: {report['as_of']}",
+                "Due for reconsideration: " + ", ".join(report["due_for_reconsideration"]),
+                "",
+            ]
+        )
     for game in report["games"]:
         lines.extend(
             [
                 f"## {game['title']}",
                 "",
                 f"- Platform: {game['platform']}",
+                f"- Decision state: {report['current_states'][game['id']]}",
                 f"- Abandoned: {game['abandoned_on']}",
                 f"- Reason: {game['reason_category']} — {game['reason']}",
                 f"- Attempts: {game.get('attempts', 1)}",

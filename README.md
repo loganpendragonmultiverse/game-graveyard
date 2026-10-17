@@ -1,6 +1,6 @@
 # Game Graveyard
 
-## Current release 1.2.0
+## Current release 1.2.1
 
 Make a sharing copy without private reasons, notes or decision history.
 

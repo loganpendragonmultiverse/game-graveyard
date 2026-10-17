@@ -27,3 +27,11 @@ Use game-graveyard graveyard.json --share-safe --format json --output share.json
 Recover cleanly when writing a report and its companion file fails.
 
 Report and ledger/decision/history files are prepared together. If an ordinary write fails, the command removes only unchanged files it created, so you can fix the destination and retry. Existing files, source inputs and files changed by another process are preserved. Outputs are UTF-8 with LF endings. This handles ordinary write failures; it does not promise a multi-file transaction through power loss or recall text already read from stdout.
+
+## Gold Star review — October 17, 2026
+
+Reviewed release: v1.2.2. Keep a record of games you stopped playing, revisit your decisions and make a sharing copy without private reasons or notes.
+
+Logan considers this project complete. Continue fixes and maintenance, and consider good new ideas. The catalog records the reviewed release.
+
+Definition: https://www.loganpendragonforge.com/open-source/?gold=1

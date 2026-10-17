@@ -16,3 +16,5 @@
 - Added validated abandoned-game records and reason categories.
 - Added reason filtering, reconsideration visibility, and aggregate summaries.
 - Added Markdown and JSON reports with safe output handling.
+
+CSV rejects NUL characters consistently across supported Python versions; use JSON to retain those records. Ordinary whitespace/control prefixes before formula-like text are neutralized in spreadsheet-safe exports.

@@ -85,6 +85,8 @@ def state_as_of(game: dict[str, Any], as_of: str | None) -> str:
 
 
 def load_csv(text: str) -> dict[str, Any]:
+    if "\0" in text:
+        raise ValueError("CSV cannot contain NUL characters; use JSON for this record")
     reader = csv.DictReader(io.StringIO(text.lstrip("\ufeff")))
     headers = reader.fieldnames or []
     if len(headers) != len(set(headers)) or set(headers) - set(FIELDS):
@@ -110,6 +112,8 @@ def export_csv(games: list[dict[str, Any]], *, spreadsheet_safe: bool = True) ->
     writer.writeheader()
     for game in games:
         row = {**game, "history": json.dumps(game.get("history", []))}
+        if any(isinstance(value, str) and "\0" in value for value in row.values()):
+            raise ValueError("CSV cannot contain NUL characters; use JSON for this record")
         if spreadsheet_safe:
             row = {
                 key: (

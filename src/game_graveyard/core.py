@@ -25,7 +25,13 @@ def _date(value: Any, field: str) -> str:
 def load_graveyard(path: Path) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
     data = load_csv(text) if path.suffix.lower() == ".csv" else json.loads(text)
-    if isinstance(data, dict) and "version" not in data and isinstance(data.get("games"), list):
+    if (
+        isinstance(data, dict)
+        and isinstance(data.get("games"), list)
+        and ("version" not in data or data.get("format") == "game-graveyard-backlog")
+    ):
+        if "version" in data and data["version"] != 1:
+            raise ValueError("backlog import requires version 1")
         if not all(
             isinstance(g, dict) and isinstance(g.get("graveyard_record"), dict)
             for g in data["games"]

@@ -1,5 +1,11 @@
 # Game Graveyard
 
+## Current release 1.1.1
+
+Repair randomizer interchange and make CSV exports safe for spreadsheet viewing by default.
+
+Use `game-graveyard graveyard.json --format backlog --output backlog.json` for a version 1 randomizer input. Ownership still defaults false and must be reviewed. CSV export prefixes formula-like text with an apostrophe by default; this changes those cells intentionally for spreadsheet viewing. `--format csv --csv-lossless` preserves exact cell text for trusted round trips and may contain executable spreadsheet formulas. Neither mode promises that an arbitrary spreadsheet program is safe; inspect exports before opening them.
+
 [![CI](https://github.com/loganpendragonmultiverse/game-graveyard/actions/workflows/ci.yml/badge.svg)](https://github.com/loganpendragonmultiverse/game-graveyard/actions/workflows/ci.yml)
 
 Game Graveyard keeps intentionally abandoned games out of an active backlog without erasing the decision. A portable JSON record can retain the platform, attempts, approximate playtime, reason category, explanation, abandonment date, and an optional reconsideration date.
@@ -27,3 +33,5 @@ game-graveyard examples/graveyard.json --as-of 2026-09-07 --format json
 ```
 
 Use --decision abandoned|reconsidering|returned with --game-id, --date, --decision-note and --decision-output new.json. --undo-last appends a reversal instead of deleting history. Dates must remain ordered and original abandonment reasons are preserved. --as-of evaluates decision state and due reconsideration dates without scheduling reminders. CSV input/output carries documented fields and JSON history; unsupported extra columns are rejected. --format backlog creates a randomizer-compatible JSON with original graveyard_record metadata for re-import. Ownership is unknown and defaults false, so review backlog rules before drawing. Generic backlog records without authored abandonment metadata are rejected. No storefront login or notification is performed.
+
+CSV rejects NUL characters consistently across supported Python versions; use JSON to retain those records. Ordinary whitespace/control prefixes before formula-like text are neutralized in spreadsheet-safe exports.

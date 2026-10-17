@@ -16,6 +16,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--format", choices=("markdown", "json", "csv", "backlog"), default="markdown"
     )
+    parser.add_argument(
+        "--csv-lossless",
+        action="store_true",
+        help="Keep exact CSV cell text; formula-like text may execute in spreadsheet software",
+    )
     parser.add_argument("--as-of")
     parser.add_argument("--decision", choices=sorted(STATES))
     parser.add_argument("--undo-last", action="store_true")
@@ -26,6 +31,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", type=Path)
     args = parser.parse_args(argv)
     try:
+        if args.csv_lossless and args.format != "csv":
+            raise ValueError("--csv-lossless requires --format csv")
         data = load_graveyard(args.input)
         if args.decision and args.undo_last:
             raise ValueError("Choose a decision or undo-last")
@@ -54,7 +61,7 @@ def main(argv: list[str] | None = None) -> int:
             else render_markdown(report)
         )
         if args.format == "csv":
-            rendered = export_csv(report["games"])
+            rendered = export_csv(report["games"], spreadsheet_safe=not args.csv_lossless)
         elif args.format == "backlog":
             rendered = json.dumps(export_backlog(report["games"]), indent=2) + "\n"
         if args.decision_output:

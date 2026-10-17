@@ -85,6 +85,8 @@ def state_as_of(game: dict[str, Any], as_of: str | None) -> str:
 
 
 def load_csv(text: str) -> dict[str, Any]:
+    if "\0" in text:
+        raise ValueError("CSV cannot contain NUL characters; use JSON for this record")
     reader = csv.DictReader(io.StringIO(text.lstrip("\ufeff")))
     headers = reader.fieldnames or []
     if len(headers) != len(set(headers)) or set(headers) - set(FIELDS):
@@ -104,17 +106,32 @@ def load_csv(text: str) -> dict[str, Any]:
     return {"version": 1, "games": games}
 
 
-def export_csv(games: list[dict[str, Any]]) -> str:
+def export_csv(games: list[dict[str, Any]], *, spreadsheet_safe: bool = True) -> str:
     output = io.StringIO(newline="")
     writer = csv.DictWriter(output, fieldnames=FIELDS, extrasaction="ignore")
     writer.writeheader()
     for game in games:
-        writer.writerow({**game, "history": json.dumps(game.get("history", []))})
+        row = {**game, "history": json.dumps(game.get("history", []))}
+        if any(isinstance(value, str) and "\0" in value for value in row.values()):
+            raise ValueError("CSV cannot contain NUL characters; use JSON for this record")
+        if spreadsheet_safe:
+            row = {
+                key: (
+                    "'" + value
+                    if isinstance(value, str)
+                    and value.lstrip(" \t\r\n\v\f\0").startswith(("=", "+", "-", "@"))
+                    else value
+                )
+                for key, value in row.items()
+            }
+        writer.writerow(row)
     return output.getvalue()
 
 
 def export_backlog(games: list[dict[str, Any]]) -> dict[str, Any]:
     return {
+        "version": 1,
+        "format": "game-graveyard-backlog",
         "games": [
             {
                 "id": game["id"],

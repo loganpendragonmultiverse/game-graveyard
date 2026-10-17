@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 - 2026-10-17
+
+- Include the required version 1 schema marker in backlog exports
+- Neutralize formula-leading CSV text, including whitespace/control prefixes
+- Offer explicit lossless CSV export for trusted interchange without silently claiming spreadsheet safety
+
 ## 1.1.0 - 2026-09-07
 
 - Add reversible dated decisions, explicit reconsideration views and local CSV/backlog interchange while preserving original abandonment reasons.
@@ -10,3 +16,5 @@
 - Added validated abandoned-game records and reason categories.
 - Added reason filtering, reconsideration visibility, and aggregate summaries.
 - Added Markdown and JSON reports with safe output handling.
+
+CSV rejects NUL characters consistently across supported Python versions; use JSON to retain those records. Ordinary whitespace/control prefixes before formula-like text are neutralized in spreadsheet-safe exports.

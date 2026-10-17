@@ -29,6 +29,14 @@ def main(argv: list[str] | None = None) -> int:
         help="Export only titles, platforms, broad categories and current states; review before sharing",
     )
     parser.add_argument("--as-of")
+    parser.add_argument(
+        "--state", choices=("abandoned", "reconsidering", "returned", "not_yet_abandoned")
+    )
+    parser.add_argument(
+        "--due-only",
+        action="store_true",
+        help="Select games due for reconsideration on the required --as-of date",
+    )
     parser.add_argument("--decision", choices=sorted(STATES))
     parser.add_argument("--undo-last", action="store_true")
     parser.add_argument("--game-id")
@@ -68,7 +76,9 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError("Decision options require --decision or --undo-last")
         targets = [p for p in (args.output, args.decision_output) if p]
         validate_output_paths(targets)
-        report = build_report(data, args.reason, args.as_of)
+        report = build_report(
+            data, args.reason, args.as_of, state=args.state, due_only=args.due_only
+        )
         rendered = (
             json.dumps(report, indent=2, ensure_ascii=False) + "\n"
             if args.format == "json"

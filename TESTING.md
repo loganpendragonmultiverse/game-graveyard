@@ -25,3 +25,13 @@ Verify Add --share-safe JSON, Markdown and spreadsheet-safe CSV reports; Exclude
 Recover cleanly when writing a report and its companion file fails.
 
 Verify Stage every file before reserving new output names and never overwrite existing destinations; Roll back only unchanged files created by the failed command, preserving concurrent changes; Keep stdout delivery inside the output operation and test permission failures, collisions and retry. Run the full existing quality and build gates; release only through protected PR checks and verified tag artifacts.
+
+## 1.3.0 regression acceptance
+
+An as-of report no longer lists a game for reconsideration before its abandonment date. Only abandoned or reconsidering games can be due; returned and not-yet-abandoned states are excluded. Authored dates and decision history remain unchanged.
+
+Run the new source and CLI regression cases with the complete existing quality gates. Recheck installed tag-built artifacts after review and release approval.
+
+## 1.3.0 report controls
+
+Use `--state abandoned|reconsidering|returned|not_yet_abandoned` to select the evaluated decision state. Use `--due-only --as-of YYYY-MM-DD` to select games due on a specific date. Filters combine with `--reason` and apply to report counts and all export formats, including sharing copies. Decision files retain the full record set; filters only select the report.

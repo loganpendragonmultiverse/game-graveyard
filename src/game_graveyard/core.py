@@ -77,14 +77,43 @@ def load_graveyard(path: Path) -> dict[str, Any]:
     return data
 
 
+def _is_due(game: dict[str, Any], as_of: str | None) -> bool:
+    return bool(
+        as_of is not None
+        and game.get("reconsider_on")
+        and game["reconsider_on"] <= as_of
+        and state_as_of(game, as_of) in {"abandoned", "reconsidering"}
+    )
+
+
 def build_report(
-    data: dict[str, Any], reason: str | None = None, as_of: str | None = None
+    data: dict[str, Any],
+    reason: str | None = None,
+    as_of: str | None = None,
+    *,
+    state: str | None = None,
+    due_only: bool = False,
 ) -> dict[str, Any]:
     if as_of is not None:
         _date(as_of, "as_of")
     if reason is not None and reason not in REASONS:
         raise ValueError(f"unknown reason category: {reason}")
-    games = [game for game in data["games"] if reason is None or game["reason_category"] == reason]
+    if state is not None and state not in {
+        "abandoned",
+        "reconsidering",
+        "returned",
+        "not_yet_abandoned",
+    }:
+        raise ValueError("unknown decision state")
+    if due_only and as_of is None:
+        raise ValueError("--due-only requires --as-of")
+    games = [
+        game
+        for game in data["games"]
+        if (reason is None or game["reason_category"] == reason)
+        and (state is None or state_as_of(game, as_of) == state)
+        and (not due_only or _is_due(game, as_of))
+    ]
     reason_counts = Counter(game["reason_category"] for game in games)
     platform_counts = Counter(game["platform"] for game in games)
     reconsiderations = [game for game in games if game.get("reconsider_on")]
@@ -100,13 +129,7 @@ def build_report(
         "games": games,
         "as_of": as_of,
         "current_states": {g["id"]: state_as_of(g, as_of) for g in games},
-        "due_for_reconsideration": [
-            g["id"]
-            for g in games
-            if as_of
-            and g.get("reconsider_on", "9999-12-31") <= as_of
-            and state_as_of(g, as_of) != "returned"
-        ],
+        "due_for_reconsideration": [g["id"] for g in games if _is_due(g, as_of)],
     }
 
 

@@ -2,6 +2,8 @@
 
 ## 1.2.2 - 2026-10-17
 
+- Require YYYY-MM-DD dates so as-of comparisons cannot misorder compact or week-date spellings.
+
 - Stage every file before reserving new output names and never overwrite existing destinations
 - Roll back only unchanged files created by the failed command, preserving concurrent changes
 - Keep stdout delivery inside the output operation and test permission failures, collisions and retry

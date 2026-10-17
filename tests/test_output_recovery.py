@@ -227,3 +227,15 @@ def test_stdout_cli_failure_leaves_no_state(tmp_path, monkeypatch, capsys):
         assert main(args) == 2
     capsys.readouterr()
     assert not state.exists()
+
+
+@pytest.mark.parametrize("value", ["20260101", "2026-W01-4"])
+def test_noncanonical_iso_dates_are_rejected_before_output(tmp_path, capsys, value):
+    source, _ = fixture(tmp_path)
+    data = json.loads(source.read_text())
+    data["games"][0]["abandoned_on"] = value
+    source.write_text(json.dumps(data))
+    report, state = tmp_path / "report.json", tmp_path / "state.json"
+    assert main(arguments(source, report, state)) == 2
+    capsys.readouterr()
+    assert not report.exists() and not state.exists()

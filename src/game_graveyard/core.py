@@ -16,7 +16,9 @@ def _date(value: Any, field: str) -> str:
     if not isinstance(value, str):
         raise TypeError(f"{field} must be an ISO date")
     try:
-        date.fromisoformat(value)
+        parsed = date.fromisoformat(value)
+        if parsed.isoformat() != value:
+            raise ValueError("dates must use YYYY-MM-DD")
     except ValueError as exc:
         raise ValueError(f"{field} must be an ISO date") from exc
     return value

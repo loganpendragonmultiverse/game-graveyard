@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .core import REASONS, build_report, load_graveyard, render_markdown
 from .history import STATES, decide, export_backlog, export_csv
+from .sharing import shared_csv, shared_markdown, shared_report
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -21,6 +22,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Keep exact CSV cell text; formula-like text may execute in spreadsheet software",
     )
+    parser.add_argument(
+        "--share-safe",
+        action="store_true",
+        help="Export only titles, platforms, broad categories and current states; review before sharing",
+    )
     parser.add_argument("--as-of")
     parser.add_argument("--decision", choices=sorted(STATES))
     parser.add_argument("--undo-last", action="store_true")
@@ -33,6 +39,14 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.csv_lossless and args.format != "csv":
             raise ValueError("--csv-lossless requires --format csv")
+        if args.share_safe and (
+            args.format == "backlog"
+            or args.csv_lossless
+            or args.decision
+            or args.undo_last
+            or args.decision_output
+        ):
+            raise ValueError("--share-safe cannot create backlog/decision files or lossless CSV")
         data = load_graveyard(args.input)
         if args.decision and args.undo_last:
             raise ValueError("Choose a decision or undo-last")
@@ -64,6 +78,15 @@ def main(argv: list[str] | None = None) -> int:
             rendered = export_csv(report["games"], spreadsheet_safe=not args.csv_lossless)
         elif args.format == "backlog":
             rendered = json.dumps(export_backlog(report["games"]), indent=2) + "\n"
+        if args.share_safe:
+            shared = shared_report(report)
+            rendered = (
+                json.dumps(shared, indent=2, ensure_ascii=False) + "\n"
+                if args.format == "json"
+                else shared_csv(shared)
+                if args.format == "csv"
+                else shared_markdown(shared)
+            )
         if args.decision_output:
             args.decision_output.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
         if args.output:

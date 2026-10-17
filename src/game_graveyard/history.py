@@ -104,17 +104,30 @@ def load_csv(text: str) -> dict[str, Any]:
     return {"version": 1, "games": games}
 
 
-def export_csv(games: list[dict[str, Any]]) -> str:
+def export_csv(games: list[dict[str, Any]], *, spreadsheet_safe: bool = True) -> str:
     output = io.StringIO(newline="")
     writer = csv.DictWriter(output, fieldnames=FIELDS, extrasaction="ignore")
     writer.writeheader()
     for game in games:
-        writer.writerow({**game, "history": json.dumps(game.get("history", []))})
+        row = {**game, "history": json.dumps(game.get("history", []))}
+        if spreadsheet_safe:
+            row = {
+                key: (
+                    "'" + value
+                    if isinstance(value, str)
+                    and value.lstrip(" \t\r\n\v\f\0").startswith(("=", "+", "-", "@"))
+                    else value
+                )
+                for key, value in row.items()
+            }
+        writer.writerow(row)
     return output.getvalue()
 
 
 def export_backlog(games: list[dict[str, Any]]) -> dict[str, Any]:
     return {
+        "version": 1,
+        "format": "game-graveyard-backlog",
         "games": [
             {
                 "id": game["id"],

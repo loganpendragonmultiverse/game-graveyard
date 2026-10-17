@@ -1,5 +1,11 @@
 # Game Graveyard
 
+## Current release 1.1.1
+
+Repair randomizer interchange and make CSV exports safe for spreadsheet viewing by default.
+
+Use `game-graveyard graveyard.json --format backlog --output backlog.json` for a version 1 randomizer input. Ownership still defaults false and must be reviewed. CSV export prefixes formula-like text with an apostrophe by default; this changes those cells intentionally for spreadsheet viewing. `--format csv --csv-lossless` preserves exact cell text for trusted round trips and may contain executable spreadsheet formulas. Neither mode promises that an arbitrary spreadsheet program is safe; inspect exports before opening them.
+
 [![CI](https://github.com/loganpendragonmultiverse/game-graveyard/actions/workflows/ci.yml/badge.svg)](https://github.com/loganpendragonmultiverse/game-graveyard/actions/workflows/ci.yml)
 
 Game Graveyard keeps intentionally abandoned games out of an active backlog without erasing the decision. A portable JSON record can retain the platform, attempts, approximate playtime, reason category, explanation, abandonment date, and an optional reconsideration date.

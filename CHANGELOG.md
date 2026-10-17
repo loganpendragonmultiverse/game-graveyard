@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 - 2026-10-17
+
+- Include the required version 1 schema marker in backlog exports
+- Neutralize formula-leading CSV text, including whitespace/control prefixes
+- Offer explicit lossless CSV export for trusted interchange without silently claiming spreadsheet safety
+
 ## 1.1.0 - 2026-09-07
 
 - Add reversible dated decisions, explicit reconsideration views and local CSV/backlog interchange while preserving original abandonment reasons.

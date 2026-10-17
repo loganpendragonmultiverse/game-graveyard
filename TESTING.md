@@ -19,3 +19,9 @@ CSV rejects NUL characters consistently across supported Python versions; use JS
 Make a sharing copy without private reasons, notes or decision history.
 
 Verify Add --share-safe JSON, Markdown and spreadsheet-safe CSV reports; Exclude IDs, free-text reasons, dates, playtime, history and unknown metadata through an allowlist; Reject sharing mode with decision writes, backlog export or lossless CSV. Run the full existing quality and build gates; release only through protected PR checks and verified tag artifacts.
+
+## 1.2.2 acceptance
+
+Recover cleanly when writing a report and its companion file fails.
+
+Verify Stage every file before reserving new output names and never overwrite existing destinations; Roll back only unchanged files created by the failed command, preserving concurrent changes; Keep stdout delivery inside the output operation and test permission failures, collisions and retry. Run the full existing quality and build gates; release only through protected PR checks and verified tag artifacts.

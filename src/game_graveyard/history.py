@@ -38,6 +38,8 @@ def validate_history(game: dict[str, Any]) -> None:
         ):
             raise ValueError(f"history[{index}] requires state, date and note")
         current = date.fromisoformat(event["date"])
+        if current.isoformat() != event["date"]:
+            raise ValueError("history dates must use YYYY-MM-DD")
         if current < last:
             raise ValueError("history dates must be ordered after abandonment")
         last = current

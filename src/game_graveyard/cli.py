@@ -7,6 +7,7 @@ from pathlib import Path
 
 from .core import REASONS, build_report, load_graveyard, render_markdown
 from .history import STATES, decide, export_backlog, export_csv
+from .output import validate_output_paths, write_new_outputs
 from .sharing import shared_csv, shared_markdown, shared_report
 
 
@@ -66,8 +67,7 @@ def main(argv: list[str] | None = None) -> int:
         elif any((args.game_id, args.date, args.decision_note, args.decision_output)):
             raise ValueError("Decision options require --decision or --undo-last")
         targets = [p for p in (args.output, args.decision_output) if p]
-        if len({p.resolve() for p in targets}) != len(targets) or any(p.exists() for p in targets):
-            raise ValueError("Outputs must be distinct new files")
+        validate_output_paths(targets)
         report = build_report(data, args.reason, args.as_of)
         rendered = (
             json.dumps(report, indent=2, ensure_ascii=False) + "\n"
@@ -87,14 +87,17 @@ def main(argv: list[str] | None = None) -> int:
                 if args.format == "csv"
                 else shared_markdown(shared)
             )
-        if args.decision_output:
-            args.decision_output.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        outputs = []
         if args.output:
-            if args.output.exists():
-                raise ValueError(f"output already exists: {args.output}")
-            args.output.write_text(rendered, encoding="utf-8")
-        else:
+            outputs.append((args.output, rendered))
+        if args.decision_output:
+            outputs.append((args.decision_output, json.dumps(data, indent=2) + "\n"))
+
+        def deliver() -> None:
             sys.stdout.write(rendered)
+            sys.stdout.flush()
+
+        write_new_outputs(outputs, deliver=None if args.output else deliver)
     except (OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

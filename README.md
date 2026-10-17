@@ -1,5 +1,11 @@
 # Game Graveyard
 
+> ⭐ **Gold Star Project**
+> I consider this project complete. Fixes, maintenance and good new ideas are still welcome.
+> [About Gold Stars](https://www.loganpendragonforge.com/open-source/?gold=1)
+>
+> Keep a record of games you stopped playing, revisit your decisions and make a sharing copy without private reasons or notes.
+
 ## Current release 1.2.2
 
 Recover cleanly when writing a report and its companion file fails.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1 - 2026-10-17
+
+- Reject NUL characters in sharing CSV, matching ordinary CSV behavior; JSON still preserves those labels.
+
 ## 1.2.0 - 2026-10-17
 
 - Add --share-safe JSON, Markdown and spreadsheet-safe CSV reports

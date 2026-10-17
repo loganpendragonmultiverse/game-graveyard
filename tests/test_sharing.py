@@ -60,3 +60,14 @@ def test_incompatible_sharing_writes(tmp_path, capsys, extra):
     path.write_text(json.dumps(data()))
     assert main([str(path), "--share-safe", *extra]) == 2
     assert "--share-safe" in capsys.readouterr().err
+
+
+def test_sharing_csv_rejects_nul_without_private_leaks(tmp_path, capsys):
+    source = data()
+    source["games"][0]["title"] = "\0=title"
+    path = tmp_path / "private.json"
+    path.write_text(json.dumps(source))
+    assert main([str(path), "--share-safe", "--format", "csv"]) == 2
+    assert "NUL" in capsys.readouterr().err
+    assert main([str(path), "--share-safe", "--format", "json"]) == 0
+    assert "PRIVATE-" not in capsys.readouterr().out

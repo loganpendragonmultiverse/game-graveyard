@@ -33,6 +33,8 @@ def shared_csv(report: dict[str, Any]) -> str:
     writer = csv.DictWriter(output, fieldnames=FIELDS)
     writer.writeheader()
     for g in report["games"]:
+        if any("\0" in v for v in g.values()):
+            raise ValueError("CSV cannot contain NUL characters; use JSON for this record")
         writer.writerow(
             {k: "'" + v if v.lstrip().startswith(("=", "+", "-", "@")) else v for k, v in g.items()}
         )

@@ -6,7 +6,12 @@
 >
 > Keep a record of games you stopped playing, revisit your decisions and make a sharing copy without private reasons or notes.
 
-## Current release 1.2.2
+## Current release 1.3.0
+
+Add `--state` and `--due-only --as-of YYYY-MM-DD` report filters. Counts and exports reflect the selection; decision files retain all records.
+An as-of report no longer lists a game for reconsideration before its abandonment date. Only abandoned or reconsidering games can be due; returned and not-yet-abandoned states are excluded. Authored dates and decision history remain unchanged.
+
+## Updates in 1.2.2
 
 Recover cleanly when writing a report and its companion file fails.
 
@@ -53,3 +58,7 @@ game-graveyard examples/graveyard.json --as-of 2026-09-07 --format json
 Use --decision abandoned|reconsidering|returned with --game-id, --date, --decision-note and --decision-output new.json. --undo-last appends a reversal instead of deleting history. Dates must remain ordered and original abandonment reasons are preserved. --as-of evaluates decision state and due reconsideration dates without scheduling reminders. CSV input/output carries documented fields and JSON history; unsupported extra columns are rejected. --format backlog creates a randomizer-compatible JSON with original graveyard_record metadata for re-import. Ownership is unknown and defaults false, so review backlog rules before drawing. Generic backlog records without authored abandonment metadata are rejected. No storefront login or notification is performed.
 
 CSV rejects NUL characters consistently across supported Python versions; use JSON to retain those records. Ordinary whitespace/control prefixes before formula-like text are neutralized in spreadsheet-safe exports.
+
+## 1.3.0 report controls
+
+Use `--state abandoned|reconsidering|returned|not_yet_abandoned` to select the evaluated decision state. Use `--due-only --as-of YYYY-MM-DD` to select games due on a specific date. Filters combine with `--reason` and apply to report counts and all export formats, including sharing copies. Decision files retain the full record set; filters only select the report.

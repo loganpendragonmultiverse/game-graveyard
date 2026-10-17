@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "game-graveyard"
-version = "1.2.2"
+version = "1.3.0"
 description = "Keep an intentional record of abandoned games, attempts, and reasons outside a normal backlog."
 readme = "README.md"
 requires-python = ">=3.10"

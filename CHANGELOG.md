@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.0 - 2026-10-17
+
+- Add `--state` and `--due-only --as-of YYYY-MM-DD` report filters. Counts and exports reflect the selection; decision files retain all records.
+- An as-of report no longer lists a game for reconsideration before its abandonment date. Only abandoned or reconsidering games can be due; returned and not-yet-abandoned states are excluded. Authored dates and decision history remain unchanged.
+
 ## 1.2.2 - 2026-10-17
 
 - Require YYYY-MM-DD dates so as-of comparisons cannot misorder compact or week-date spellings.

@@ -28,10 +28,14 @@ Recover cleanly when writing a report and its companion file fails.
 
 Report and ledger/decision/history files are prepared together. If an ordinary write fails, the command removes only unchanged files it created, so you can fix the destination and retry. Existing files, source inputs and files changed by another process are preserved. Outputs are UTF-8 with LF endings. This handles ordinary write failures; it does not promise a multi-file transaction through power loss or recall text already read from stdout.
 
-## Gold Star review — October 17, 2026
+## Prior Gold Star review — October 17, 2026
 
-Reviewed release: v1.2.2. Keep a record of games you stopped playing, revisit your decisions and make a sharing copy without private reasons or notes.
+Previously reviewed release: v1.2.2. Keep a record of games you stopped playing, revisit your decisions and make a sharing copy without private reasons or notes.
 
 Logan considers this project complete. Continue fixes and maintenance, and consider good new ideas. The catalog records the reviewed release.
 
 Definition: https://www.loganpendragonforge.com/open-source/?gold=1
+
+## 1.3.0 report controls
+
+Use `--state abandoned|reconsidering|returned|not_yet_abandoned` to select the evaluated decision state. Use `--due-only --as-of YYYY-MM-DD` to select games due on a specific date. Filters combine with `--reason` and apply to report counts and all export formats, including sharing copies. Decision files retain the full record set; filters only select the report.

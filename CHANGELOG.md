@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 - 2026-10-17
+
+- Add --share-safe JSON, Markdown and spreadsheet-safe CSV reports
+- Exclude IDs, free-text reasons, dates, playtime, history and unknown metadata through an allowlist
+- Reject sharing mode with decision writes, backlog export or lossless CSV
+
 ## 1.1.1 - 2026-10-17
 
 - Include the required version 1 schema marker in backlog exports

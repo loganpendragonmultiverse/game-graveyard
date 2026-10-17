@@ -1,6 +1,12 @@
 # Game Graveyard
 
-## Current release 1.1.1
+## Current release 1.2.0
+
+Make a sharing copy without private reasons, notes or decision history.
+
+Use game-graveyard graveyard.json --share-safe --format json --output share.json. Sharing copies contain only title, platform, broad reason category and current state. Review those fields too: a title or broad category may still be personal. Private source data stays unchanged. Sharing reports are clearly marked and cannot be used as a lossless backup or re-import file.
+
+## Updates in 1.1.1
 
 Repair randomizer interchange and make CSV exports safe for spreadsheet viewing by default.
 

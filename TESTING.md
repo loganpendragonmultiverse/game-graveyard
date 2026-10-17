@@ -13,3 +13,9 @@ Repair randomizer interchange and make CSV exports safe for spreadsheet viewing 
 Verify Include the required version 1 schema marker in backlog exports; Neutralize formula-leading CSV text, including whitespace/control prefixes; Offer explicit lossless CSV export for trusted interchange without silently claiming spreadsheet safety. Run the full existing quality and build gates; release only through protected PR checks and verified tag artifacts.
 
 CSV rejects NUL characters consistently across supported Python versions; use JSON to retain those records. Ordinary whitespace/control prefixes before formula-like text are neutralized in spreadsheet-safe exports.
+
+## 1.2.0 acceptance
+
+Make a sharing copy without private reasons, notes or decision history.
+
+Verify Add --share-safe JSON, Markdown and spreadsheet-safe CSV reports; Exclude IDs, free-text reasons, dates, playtime, history and unknown metadata through an allowlist; Reject sharing mode with decision writes, backlog export or lossless CSV. Run the full existing quality and build gates; release only through protected PR checks and verified tag artifacts.

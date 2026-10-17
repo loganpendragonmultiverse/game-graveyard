@@ -15,3 +15,9 @@ Local formatting, lint, strict types and regression tests pass. Public release c
 Repair randomizer interchange and make CSV exports safe for spreadsheet viewing by default.
 
 Use `game-graveyard graveyard.json --format backlog --output backlog.json` for a version 1 randomizer input. Ownership still defaults false and must be reviewed. CSV export prefixes formula-like text with an apostrophe by default; this changes those cells intentionally for spreadsheet viewing. `--format csv --csv-lossless` preserves exact cell text for trusted round trips and may contain executable spreadsheet formulas. Neither mode promises that an arbitrary spreadsheet program is safe; inspect exports before opening them.
+
+## 1.2.0 acceptance
+
+Make a sharing copy without private reasons, notes or decision history.
+
+Use game-graveyard graveyard.json --share-safe --format json --output share.json. Sharing copies contain only title, platform, broad reason category and current state. Review those fields too: a title or broad category may still be personal. Private source data stays unchanged. Sharing reports are clearly marked and cannot be used as a lossless backup or re-import file.

@@ -21,3 +21,9 @@ Use `game-graveyard graveyard.json --format backlog --output backlog.json` for a
 Make a sharing copy without private reasons, notes or decision history.
 
 Use game-graveyard graveyard.json --share-safe --format json --output share.json. Sharing copies contain only title, platform, broad reason category and current state. Review those fields too: a title or broad category may still be personal. Private source data stays unchanged. Sharing reports are clearly marked and cannot be used as a lossless backup or re-import file.
+
+## 1.2.2 acceptance
+
+Recover cleanly when writing a report and its companion file fails.
+
+Report and ledger/decision/history files are prepared together. If an ordinary write fails, the command removes only unchanged files it created, so you can fix the destination and retry. Existing files, source inputs and files changed by another process are preserved. Outputs are UTF-8 with LF endings. This handles ordinary write failures; it does not promise a multi-file transaction through power loss or recall text already read from stdout.

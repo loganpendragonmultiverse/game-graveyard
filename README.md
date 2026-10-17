@@ -1,6 +1,12 @@
 # Game Graveyard
 
-## Current release 1.2.1
+## Current release 1.2.2
+
+Recover cleanly when writing a report and its companion file fails.
+
+Report and ledger/decision/history files are prepared together. If an ordinary write fails, the command removes only unchanged files it created, so you can fix the destination and retry. Existing files, source inputs and files changed by another process are preserved. Outputs are UTF-8 with LF endings. This handles ordinary write failures; it does not promise a multi-file transaction through power loss or recall text already read from stdout.
+
+## Updates in 1.2.1
 
 Make a sharing copy without private reasons, notes or decision history.
 

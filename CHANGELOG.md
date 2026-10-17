@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 - 2026-10-17
+
+- Stage every file before reserving new output names and never overwrite existing destinations
+- Roll back only unchanged files created by the failed command, preserving concurrent changes
+- Keep stdout delivery inside the output operation and test permission failures, collisions and retry
+
 ## 1.2.1 - 2026-10-17
 
 - Reject NUL characters in sharing CSV, matching ordinary CSV behavior; JSON still preserves those labels.

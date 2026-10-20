@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "game-graveyard"
-version = "1.3.0"
+version = "1.3.1"
 description = "Keep an intentional record of abandoned games, attempts, and reasons outside a normal backlog."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -35,3 +35,7 @@ omit = ["src/*/__main__.py"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov=game_graveyard --cov-branch --cov-report=term-missing --cov-fail-under=90"
+
+[tool.setuptools.data-files]
+"share/game-graveyard" = ["README.md", "CHANGELOG.md", "DEVELOPMENT.md", "TESTING.md", "LICENSE"]
+"share/game-graveyard/examples" = ["examples/*.json"]

@@ -6,7 +6,13 @@
 >
 > Keep a record of games you stopped playing, revisit your decisions and make a sharing copy without private reasons or notes.
 
-## Current release 1.3.0
+## Current release 1.3.1
+
+Numeric fields reject values outside the finite float range with a normal input error, including JSON integers such as `10**400`. Values are never clamped or silently replaced. Wheels and source distributions include the README, changelog, development/testing instructions, license and runnable examples.
+
+Reports reject a playtime total outside that range; use smaller playtimes or a report filter. A single supported large value remains valid.
+
+## Updates in 1.3.0
 
 Add `--state` and `--due-only --as-of YYYY-MM-DD` report filters. Counts and exports reflect the selection; decision files retain all records.
 An as-of report no longer lists a game for reconsideration before its abandonment date. Only abandoned or reconsidering games can be due; returned and not-yet-abandoned states are excluded. Authored dates and decision history remain unchanged.

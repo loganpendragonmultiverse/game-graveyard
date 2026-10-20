@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.1 - 2026-10-20
+
+- Include handoff documentation and runnable examples in wheels and source distributions.
+
+- Return controlled input errors for integers outside the finite float range instead of raising OverflowError.
+- Validate individual numeric values before report calculations; preserve supported finite values and original input files.
+- Reject a non-finite report playtime total before rendering or creating report/decision files.
+
 ## 1.3.0 - 2026-10-17
 
 - Add `--state` and `--due-only --as-of YYYY-MM-DD` report filters. Counts and exports reflect the selection; decision files retain all records.

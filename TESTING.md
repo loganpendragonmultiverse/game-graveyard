@@ -35,3 +35,7 @@ Run the new source and CLI regression cases with the complete existing quality g
 ## 1.3.0 report controls
 
 Use `--state abandoned|reconsidering|returned|not_yet_abandoned` to select the evaluated decision state. Use `--due-only --as-of YYYY-MM-DD` to select games due on a specific date. Filters combine with `--reason` and apply to report counts and all export formats, including sharing copies. Decision files retain the full record set; filters only select the report.
+
+## 1.3.1 numeric boundaries
+
+Reject actual JSON integers `10**400` and `-(10**400)` with actionable finite-number errors. Cover NaN/infinity, booleans, numeric strings, negative/zero boundaries, the maximum finite float and aggregate overflow. Verify CLI failures leave inputs unchanged and create no output or companion file. Keep the full quality, dependency audit, protected PR/main/tag and original installed wheel/source-distribution gates. Do not clamp values or alter ordinary seeded selection.

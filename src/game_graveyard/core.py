@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import sys
 from collections import Counter
 from datetime import date
 from pathlib import Path
@@ -22,6 +23,19 @@ def _date(value: Any, field: str) -> str:
     except ValueError as exc:
         raise ValueError(f"{field} must be an ISO date") from exc
     return value
+
+
+def _playtime_hours(value: Any, game_id: str) -> float:
+    message = f"game {game_id} playtime_hours must be finite and non-negative"
+    if not isinstance(value, (int, float)) or isinstance(value, bool) or value > sys.float_info.max:
+        raise ValueError(message)
+    try:
+        hours = float(value)
+    except OverflowError as exc:
+        raise ValueError(message) from exc
+    if not math.isfinite(hours) or hours < 0:
+        raise ValueError(message)
+    return hours
 
 
 def load_graveyard(path: Path) -> dict[str, Any]:
@@ -66,13 +80,7 @@ def load_graveyard(path: Path) -> dict[str, Any]:
         hours = game.get("playtime_hours", 0)
         if not isinstance(attempts, int) or isinstance(attempts, bool) or attempts < 1:
             raise ValueError(f"game {game['id']} attempts must be a positive integer")
-        if (
-            not isinstance(hours, (int, float))
-            or isinstance(hours, bool)
-            or hours < 0
-            or not math.isfinite(hours)
-        ):
-            raise ValueError(f"game {game['id']} playtime_hours must be non-negative")
+        _playtime_hours(hours, game["id"])
         validate_history(game)
     return data
 
@@ -117,12 +125,17 @@ def build_report(
     reason_counts = Counter(game["reason_category"] for game in games)
     platform_counts = Counter(game["platform"] for game in games)
     reconsiderations = [game for game in games if game.get("reconsider_on")]
+    total_playtime = sum(
+        _playtime_hours(game.get("playtime_hours", 0), game["id"]) for game in games
+    )
+    if not math.isfinite(total_playtime):
+        raise ValueError(
+            "total playtime_hours must be finite; use smaller playtimes or a report filter"
+        )
     return {
         "version": 1,
         "game_count": len(games),
-        "total_playtime_hours": round(
-            sum(float(game.get("playtime_hours", 0)) for game in games), 2
-        ),
+        "total_playtime_hours": round(total_playtime, 2),
         "reason_counts": dict(sorted(reason_counts.items())),
         "platform_counts": dict(sorted(platform_counts.items())),
         "reconsideration_count": len(reconsiderations),
